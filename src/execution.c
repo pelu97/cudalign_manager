@@ -3,12 +3,12 @@
 #include "execution.h"
 #include "parser.h"
 
-t_exelist* ExeList = NULL;
+t_execution* ExeList = NULL;
 
 void insertExeList(int size, int threads, int blocks, int bp){
-    t_exelist *newElement, *temp;
+    t_execution *newElement, *temp;
 
-    newElement = malloc(sizeof(t_exelist));
+    newElement = malloc(sizeof(t_execution));
 
     newElement->size = size;
     newElement->threads = threads;
@@ -31,13 +31,13 @@ void insertExeList(int size, int threads, int blocks, int bp){
     }
 
     #ifdef DEBUG
-    printf("Inserted value %d into list\n", value);
+    printf("Inserted execution into execution list (%dM %d %dT %dB)\n", size, bp, blocks, threads);
     #endif
 
 }
 
 void printExeList(){
-    t_exelist *temp;
+    t_execution *temp;
     int i;
 
     if(ExeList == NULL){
@@ -79,7 +79,7 @@ void inputExeList(){
 }
 
 void runExeList(){
-    t_exelist* temp;
+    t_execution* temp;
     int i;
     char exeLine[300];
 
@@ -104,7 +104,7 @@ void runExeList(){
     }
 }
 
-void fetchResult(t_exelist* execution){
+void fetchResult(t_execution* execution){
     int stats[2];
     // change into temporary work directory
 
@@ -122,9 +122,13 @@ void testExeList(){
 
     insertExeList(1, 64, 128, 1);
     insertExeList(1, 64, 256, 1);
-    insertExeList(1, 64, 512, 0);
-    insertExeList(1, 128, 128, 0);
-    insertExeList(1, 128, 256, 0);
+    insertExeList(3, 64, 512, 0);
+    insertExeList(23, 128, 128, 0);
+    insertExeList(23, 128, 256, 0);
+    insertExeList(23, 128, 128, 1);
+    insertExeList(23, 128, 256, 1);
+
+    runExeList();
 
     printExeList();
 }

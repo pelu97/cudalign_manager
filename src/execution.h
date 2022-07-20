@@ -1,6 +1,10 @@
+#include "base.h"
+
 // #define DEBUG
 
-typedef struct ExecutionList {
+#ifndef EXECUTION_TYPE
+#define EXECUTION_TYPE
+typedef struct Execution {
     int size;
     int threads;
     int blocks;
@@ -8,10 +12,11 @@ typedef struct ExecutionList {
     // performance results
     int time;
     int mcups;
-    struct ExecutionList* next;
-} t_exelist;
+    struct Execution* next;
+} t_execution;
+#endif
 
-extern t_exelist* ExeList;
+extern t_execution* ExeList;
 
 
 void insertExeList(int size, int threads, int blocks, int bp);
@@ -22,6 +27,6 @@ void inputExeList();
 
 void runExeList();
 
-void fetchResult(t_exelist* execution);
+void fetchResult(t_execution* execution);
 
 void testExeList();
