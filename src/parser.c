@@ -6,6 +6,8 @@
 #define FILE_SOURCE "../Stats-23M_64Threads_480Blocks_BP-01_20_50-15_07_22/statistics"
 
 
+
+
 int isNumber(const char c){
     if(
         (c == '0') ||
@@ -84,6 +86,11 @@ void readStats(int* stats){
     int i;
 
     filep = fopen(FILE_SOURCE, "r");
+
+    // filep = fopen("."WORK_DIR"/statistics", "r");
+    #ifdef DEBUG
+    printf("."WORK_DIR"/statistics\n");
+    #endif
 
 
     i=0;

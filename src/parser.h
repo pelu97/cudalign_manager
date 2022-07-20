@@ -1,3 +1,4 @@
+#include "base.h"
 
 int isNumber(const char c);
 int parseString(const char* string);
