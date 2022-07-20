@@ -1,5 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "parser.h"
+
+
+#define FILE_SOURCE "../Stats-23M_64Threads_480Blocks_BP-01_20_50-15_07_22/statistics"
+
 
 int isNumber(const char c){
     if(
@@ -27,7 +32,7 @@ int parseString(const char* string){
 
     j=0;
     for(i=0; string[i]!='\0'; i++){
-        printf("%c", string[i]);
+        // printf("%c", string[i]);
 
         if(isNumber(string[i])){
             parsedNumber[j] = string[i];
@@ -39,7 +44,7 @@ int parseString(const char* string){
         }
     }
 
-    printf("String with number found: %s\n", parsedNumber);
+    // printf("String with number found: %s\n", parsedNumber);
 
     number = atoi(parsedNumber);
 
@@ -67,6 +72,32 @@ void readFile(const char* fileSource){
         if(i == 15){
             printf("__MCUPS__ %s", string);
             printf("%d", parseString(string));
+        }
+
+        i++;
+    }
+}
+
+void readStats(int* stats){
+    FILE* filep;
+    char string[500];
+    int i;
+
+    filep = fopen(FILE_SOURCE, "r");
+
+
+    i=0;
+    while(fgets(string, 500, filep)){
+        // printf("%s", string);
+
+        if(i == 13){
+            // printf("__TOTAL__ %s", string);
+            stats[0] = parseString(string);
+        }
+
+        if(i == 15){
+            // printf("__MCUPS__ %s", string);
+            stats[1] = parseString(string);
         }
 
         i++;
