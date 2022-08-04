@@ -17,7 +17,7 @@ typedef struct Execution {
 #endif
 
 extern t_execution* ExeList;
-
+extern int currentThreads;
 
 void insertExeList(int size, int threads, int blocks, int bp);
 

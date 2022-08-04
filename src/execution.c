@@ -4,6 +4,7 @@
 #include "parser.h"
 
 t_execution* ExeList = NULL;
+int currentThreads = -1;
 
 void insertExeList(int size, int threads, int blocks, int bp){
     t_execution *newElement, *temp;
@@ -79,25 +80,60 @@ void inputExeList(){
 }
 
 void runExeList(){
-    t_execution* temp;
+    t_execution* execution;
     int i;
-    char exeLine[300];
+    char exeLine[1000], seqA[300], seqB[300], cudalignDir[300];
 
-    temp = ExeList;
+    execution = ExeList;
 
-    if(temp == NULL){
+    if(execution == NULL){
         printf("No executions in list.\n");
     }
     else{
         i=1;
-        while(temp != NULL){
-            sprintf(exeLine, "./cudalign --ram-size=5G seq1 seq2 --blocks=%d", temp->blocks);
-
+        while(execution != NULL){
+        
+        	if((execution->threads == 64) && (currentThreads != 64)){
+        		// Change directory to 64 threads compiled cudalign
+        		printf("Changing directory to "CUDA64_DIR"\n");
+        		sprintf(cudalignDir, CUDA64_DIR);
+        		//printf("cd "CUDA64_DIR);
+        		//system("cd "CUDA64_DIR);
+        		currentThreads = 64;
+        	}
+        	else if((execution->threads == 128) && (currentThreads != 128)){
+        		// Change directory to 128 threads compiled cudalign
+        		printf("Changing directory to "CUDA128_DIR"\n");
+        		sprintf(cudalignDir, CUDA128_DIR);
+        		//printf("cd "CUDA128_DIR);
+        		//system("cd "CUDA128_DIR);
+        		currentThreads = 128;
+        	}
+        	else if((execution->threads == 256) && (currentThreads != 256)){
+        		// Change directory to 256 threads compiled cudalign
+        		printf("Changing directory to "CUDA256_DIR"\n");
+        		sprintf(cudalignDir, CUDA256_DIR);
+        		//printf("cd "CUDA256_DIR);
+        		//system("cd "CUDA256_DIR);
+        		currentThreads = 256;
+        	}
+        	
+        	//1M
+        	if(execution->size == 1){
+        		sprintf(seqA, SEQ_DIR"/1M/"SEQ_1_A);
+        		sprintf(seqB, SEQ_DIR"/1M/"SEQ_1_B);
+        	}
+        	
+        	
+            sprintf(exeLine, "%s/cudalign --ram-size=5G %s %s --blocks=%d", cudalignDir, seqA, seqB, execution->blocks);
+			system(exeLine);
+			
+			
             // execute
             printf("Execution Line %d: %s\n", i, exeLine);
-            fetchResult(temp);
+            //fetchResult(execution);
 
-            temp = temp->next;
+            execution = execution->next;
             i++;
         }
 
@@ -108,7 +144,7 @@ void fetchResult(t_execution* execution){
     int stats[2];
     // change into temporary work directory
 
-    readStats(stats);
+    readStats("/home/laicoadm/Documentos/Pedro/MASA_CUDAlign_256_threads", stats);
 
     printf("-Time: %d\n-MCups: %d\n", stats[0], stats[1]);
 
@@ -120,13 +156,13 @@ void fetchResult(t_execution* execution){
 
 void testExeList(){
 
-    insertExeList(1, 64, 128, 1);
-    insertExeList(1, 64, 256, 1);
-    insertExeList(3, 64, 512, 0);
-    insertExeList(23, 128, 128, 0);
-    insertExeList(23, 128, 256, 0);
-    insertExeList(23, 128, 128, 1);
-    insertExeList(23, 128, 256, 1);
+    insertExeList(1, 256, 512, 1);
+    insertExeList(1, 128, 256, 1);
+    //insertExeList(3, 64, 512, 0);
+    //insertExeList(23, 128, 128, 0);
+    //insertExeList(23, 128, 256, 0);
+    //insertExeList(23, 128, 128, 1);
+    //insertExeList(23, 128, 256, 1);
 
     runExeList();
 

@@ -80,19 +80,21 @@ void readFile(const char* fileSource){
     }
 }
 
-void readStats(int* stats){
+void readStats(const char* cudalignDir, int* stats){
     FILE* filep;
-    char string[500];
+    char string[500], fileSource[400];
     int i;
-
-    filep = fopen(FILE_SOURCE, "r");
+	
+	sprintf(fileSource, "%s"WORK_DIR"/statistics", cudalignDir);
+	
+    //filep = fopen(FILE_SOURCE, "r");
 
     // filep = fopen("."WORK_DIR"/statistics", "r");
     #ifdef DEBUG
-    printf("."WORK_DIR"/statistics\n");
+    printf("Stats file: %s\n", fileSource);
     #endif
 
-
+	/*
     i=0;
     while(fgets(string, 500, filep)){
         // printf("%s", string);
@@ -109,4 +111,5 @@ void readStats(int* stats){
 
         i++;
     }
+    */
 }
