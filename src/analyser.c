@@ -128,7 +128,7 @@ void printAnalysisList(){
             printf("--Best time: %d\n", analysis->bestExecution->time);
             printf("--Best MCups: %d\n", analysis->bestExecution->mcups);
             printf("--Best threads: %d\n", analysis->bestExecution->threads);
-            printf("--Best bocks: %d\n", analysis->bestExecution->blocks);
+            printf("--Best blocks: %d\n", analysis->bestExecution->blocks);
         }
         else{
             printf("--Best execution not found yet\n");

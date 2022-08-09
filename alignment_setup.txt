@@ -1,0 +1,3 @@
+/home/pelu/Documents/Projects/TCC/cudalign_profiler/seq/1M/AE002160.2.fasta /home/pelu/Documents/Projects/TCC/cudalign_profiler/seq/1M/CP000051.1.fasta
+/home/pelu/Documents/Projects/TCC/cudalign_profiler/seq/3M/BA000035.2.fasta /home/pelu/Documents/Projects/TCC/cudalign_profiler/seq/3M/BX927147.1.fasta
+/home/pelu/Documents/Projects/TCC/cudalign_profiler/seq/5M/AE016879.1.fasta /home/pelu/Documents/Projects/TCC/cudalign_profiler/seq/5M/AE017225.1.fasta
