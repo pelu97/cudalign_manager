@@ -8,8 +8,10 @@
 
 t_execution* ExeList = NULL;
 int currentThreads = -1;
+int exeListLength = 0;
+int exeListStatus = 0;
 
-void insertExeList(char* seqA, char* seqB, int size, int threads, int blocks, int bp, int isProfile){
+t_execution* insertExeInList(char* seqA, char* seqB, int size, int threads, int blocks, int bp, int isProfile){
     t_execution *newElement, *temp;
 
     newElement = malloc(sizeof(t_execution));
@@ -27,6 +29,7 @@ void insertExeList(char* seqA, char* seqB, int size, int threads, int blocks, in
     newElement->isProfile = isProfile;
     newElement->time = -1;
     newElement->mcups = -1;
+    newElement->status = 0;
     newElement->next = NULL;
 
     if(ExeList == NULL){
@@ -41,10 +44,29 @@ void insertExeList(char* seqA, char* seqB, int size, int threads, int blocks, in
         temp->next = newElement;
     }
 
+    exeListLength++;
+
     #ifdef DEBUG
-    printf("[DEBUG - EXECUTION] - Inserted execution into execution list (%dM %d %dT %dB)\n", size, bp, blocks, threads);
+    printf("[DEBUG - EXECUTION] - Inserted execution into execution list (%dM %d %dT %dB) - list length %d\n", size, bp, blocks, threads, exeListLength);
     #endif
 
+    return newElement;
+
+}
+
+
+void loadExeInList(char* seqA, char* seqB, int size, int threads, int blocks, int bp, int isProfile, int status, int time, int mcups){
+    t_execution* newExecution;
+
+    newExecution = insertExeInList(seqA, seqB, size, threads, blocks, bp, isProfile);
+
+    newExecution->status = status;
+    newExecution->time = time;
+    newExecution->mcups = mcups;
+
+    #ifdef DEBUG
+    printf("[DEBUG - EXECUTION] - Loaded back execution size=%d threads=%d blocks=%d status=%d\n", size, threads, blocks, status);
+    #endif
 }
 
 
@@ -77,8 +99,14 @@ void printExeList(){
     else{
         temp = ExeList;
         i=1;
+        printf("----Attention: Parameters with a value of -1 will be determined automatically by the software. There is no need to do anything about it----\n");
         while(temp != NULL){
-            printf("List element %d: SeqA=%s, SeqB=%s, Size=%d, Threads=%d, Blocks=%d, BP=%d\n", i, temp->seqA, temp->seqB, temp->size, temp->threads, temp->blocks, temp->bp);
+            // printf("List element %d: SeqA=%s, SeqB=%s, Size=%d, Threads=%d, Blocks=%d, BP=%d\n", i, temp->seqA, temp->seqB, temp->size, temp->threads, temp->blocks, temp->bp);
+            printf("--Execution %d:\n", i);
+            printf("  ---Sequence A path=%s\n", temp->seqA);
+            printf("  ---Sequence B path=%s\n", temp->seqB);
+            printf("  ---Size=%d Threads=%d Blocks=%d\n", temp->size, temp->threads, temp->blocks);
+            printf("--End Execution %d\n", i);
             i++;
             temp = temp->next;
         }
@@ -103,7 +131,7 @@ void inputExeList(){
         printf("--BP: ");
         scanf("%d", &bp);
 
-        insertExeList("seqA", "seqB", size, threads, blocks, bp, 0);
+        insertExeInList("seqA", "seqB", size, threads, blocks, bp, 0);
     }
 
     printExeList();
@@ -123,6 +151,13 @@ void runExeList(){
     }
     else{
         i=1;
+
+        // if restoring an execution file, goes through list until finding the first pending execution
+        while((execution != NULL) && (execution->status == 1)){
+            i++;
+            execution = execution->next;
+        }
+
         updateExeFile();
 
         while(execution != NULL){
@@ -177,13 +212,16 @@ void runExeList(){
         	// 	sprintf(seqB, SEQ_DIR"/1M/"SEQ_1_B);
         	// }
 
+            printf("Executing alignment %d (%d/%d)\n", i, i, exeListLength);
+
             // Format the execution command using the parameters (cudalign directory, sequences directories and number of blocks)
             sprintf(exeLine, "%s/cudalign --ram-size=5G %s %s --blocks=%d", cudalignDir, execution->seqA, execution->seqB, execution->blocks);
             // Execute command
 
-
             // execute
-            printf("Execution Line %d: %s\n", i, exeLine);
+            #ifdef DEBUG
+            printf("[DEBUG - EXECUTION] Execution Line %d: %s\n", i, exeLine);
+            #endif
             // system(exeLine);
 
             // Finished this execution, update its status
@@ -192,10 +230,10 @@ void runExeList(){
             if(execution->isProfile){
                 // If it was a profiler execution, call fetchResult
                 fetchResult(execution);
+                cleanWorkDir();
             }
             else{
                 // If it was a user execution, call clean up
-                // cleanup
                 cleanUp(execution);
             }
 
@@ -207,6 +245,8 @@ void runExeList(){
             execution = execution->next;
             i++;
         }
+        exeListStatus = 1;
+        updateExeFile();
 
     }
 }
@@ -420,6 +460,7 @@ void updateExeFile(){
         #endif
     }
     else{
+        fprintf(fp, "status:%d\n", exeListStatus);
         while(execution != NULL){
             fprintf(fp, "seqA:%s seqB:%s size:%d threads:%d blocks:%d bp:%d isProfile:%d status:%d time:%d mcups:%d\n",
                 execution->seqA, execution->seqB, execution->size, execution->threads, execution->blocks, execution->bp,
@@ -438,15 +479,60 @@ void updateExeFile(){
 }
 
 
+void loadExeFile(){
+    FILE *fp;
+    char seqA[4097], seqB[4097];
+    int size, threads, blocks, bp, isProfile, status, time, mcups;
+
+    fp = fopen(EXE_FILE, "r");
+
+    if(fp == NULL){
+        #ifdef DEBUG
+        printf("[DEBUG - EXECUTION] Unexpected error ocurred when opening execution list file to load\n");
+        #endif
+    }
+    else{
+        fscanf(fp, "status:%d\n", &exeListStatus);
+        while(fscanf(fp, "seqA:%s seqB:%s size:%d threads:%d blocks:%d bp:%d isProfile:%d status:%d time:%d mcups:%d\n",
+            seqA, seqB, &size, &threads, &blocks, &bp, &isProfile, &status, &time, &mcups
+        ) != EOF){
+            loadExeInList(seqA, seqB, size, threads, blocks, bp, isProfile, status, time, mcups);
+        }
+
+
+    }
+}
+
+
+int checkExeFile(){
+    FILE *fp;
+    int result;
+
+    fp = fopen(EXE_FILE, "r");
+
+    if(fp == NULL){
+        result = 0;
+    }
+    else{
+        fscanf(fp, "status:%d\n", &result);
+        fclose(fp);
+
+        result = !result;
+    }
+
+    return result;
+}
+
+
 void testExeList(){
 
-    insertExeList("seqA", "seqB", 1, 256, 512, 1, 0);
-    insertExeList("seqA", "seqB", 1, 128, 256, 1, 0);
-    //insertExeList(3, 64, 512, 0);
-    //insertExeList(23, 128, 128, 0);
-    //insertExeList(23, 128, 256, 0);
-    //insertExeList(23, 128, 128, 1);
-    //insertExeList(23, 128, 256, 1);
+    insertExeInList("seqA", "seqB", 1, 256, 512, 1, 0);
+    insertExeInList("seqA", "seqB", 1, 128, 256, 1, 0);
+    //insertExeInList(3, 64, 512, 0);
+    //insertExeInList(23, 128, 128, 0);
+    //insertExeInList(23, 128, 256, 0);
+    //insertExeInList(23, 128, 128, 1);
+    //insertExeInList(23, 128, 256, 1);
 
     runExeList();
 

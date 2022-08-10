@@ -25,8 +25,12 @@ typedef struct Execution {
 
 extern t_execution* ExeList;
 extern int currentThreads;
+extern int exeListLength;
+extern int exeListStatus; //0 = executing, 1 = completed
 
-void insertExeList(char* seqA, char* seqB, int size, int threads, int blocks, int bp, int isProfile);
+t_execution* insertExeInList(char* seqA, char* seqB, int size, int threads, int blocks, int bp, int isProfile);
+
+void loadExeInList(char* seqA, char* seqB, int size, int threads, int blocks, int bp, int isProfile, int status, int time, int mcups);
 
 void setExeSize(t_execution* execution, int size);
 
@@ -45,5 +49,9 @@ int getFileSize(FILE* fp);
 void checkFiles();
 
 void updateExeFile();
+
+void loadExeFile();
+
+int checkExeFile();
 
 void testExeList();

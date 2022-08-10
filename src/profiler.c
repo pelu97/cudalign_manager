@@ -6,14 +6,14 @@
 
 
 void createProfileComplete(){
-    insertExeList("seq A path", "seq B path", 1, 512, 256, 1, 1);
+    insertExeInList("seq A path", "seq B path", 1, 512, 256, 1, 1);
 }
 
 void createProfileSimple(){
     // 5M
     // 128 threads
     // 256 blocks
-    insertExeList(
+    insertExeInList(
         SEQ_DIR SEQ_5_DIR "/" SEQ_5_A,
         SEQ_DIR SEQ_5_DIR "/" SEQ_5_B,
         5, //size
@@ -23,7 +23,7 @@ void createProfileSimple(){
         1 //isProfile
     );
     // 480 blocks
-    insertExeList(
+    insertExeInList(
         SEQ_DIR SEQ_5_DIR "/" SEQ_5_A,
         SEQ_DIR SEQ_5_DIR "/" SEQ_5_B,
         5, //size
@@ -33,7 +33,7 @@ void createProfileSimple(){
         1 //isProfile
     );
     // 512 blocks
-    insertExeList(
+    insertExeInList(
         SEQ_DIR SEQ_5_DIR "/" SEQ_5_A,
         SEQ_DIR SEQ_5_DIR "/" SEQ_5_B,
         5, //size
@@ -46,7 +46,7 @@ void createProfileSimple(){
 
     // 256 threads
     // 256 blocks
-    insertExeList(
+    insertExeInList(
         SEQ_DIR SEQ_5_DIR "/" SEQ_5_A,
         SEQ_DIR SEQ_5_DIR "/" SEQ_5_B,
         5, //size
@@ -56,7 +56,7 @@ void createProfileSimple(){
         1 //isProfile
     );
     // 480 blocks
-    insertExeList(
+    insertExeInList(
         SEQ_DIR SEQ_5_DIR "/" SEQ_5_A,
         SEQ_DIR SEQ_5_DIR "/" SEQ_5_B,
         5, //size
@@ -66,7 +66,7 @@ void createProfileSimple(){
         1 //isProfile
     );
     // 512 blocks
-    insertExeList(
+    insertExeInList(
         SEQ_DIR SEQ_5_DIR "/" SEQ_5_A,
         SEQ_DIR SEQ_5_DIR "/" SEQ_5_B,
         5, //size
@@ -78,7 +78,7 @@ void createProfileSimple(){
 
 
     /* Example
-    insertExeList(
+    insertExeInList(
         "seq A path",
         "seq B path",
         1, //size
@@ -99,6 +99,8 @@ void runProfileComplete(){
 }
 
 void runProfileSimple(){
+    t_analysis* analysis;
+
     createProfileSimple();
 
     runExeList();
@@ -107,5 +109,13 @@ void runProfileSimple(){
     analyse();
     printAnalysisList();
 
-    saveParameters(5, 256, 512);
+    analysis = AnalysisList;
+
+    // check the analysis for each size and stores the best parameters found for that size in the file
+
+    while(analysis != NULL){
+        saveParameters(analysis->size, analysis->bestExecution->threads, analysis->bestExecution->blocks);
+        analysis = analysis->next;
+    }
+
 }

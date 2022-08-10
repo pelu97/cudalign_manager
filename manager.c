@@ -51,7 +51,7 @@ void importAlignmentFile(){
         // file opened without error
         while(fscanf(fp, "%s %s\n", seqA, seqB) != EOF){
             // seqA, seqB, size, blocks, threads, bp, isProfile
-            insertExeList(seqA, seqB, -1, -1, -1, 1, 0);
+            insertExeInList(seqA, seqB, -1, -1, -1, 1, 0);
         }
 
         printf("Alignments read from file successfully!\n");
@@ -66,12 +66,20 @@ void importAlignmentFile(){
 }
 
 void menu(){
-    int choice, quit = 0;
+    int choice, quit = 0, exeFilePending;
 
     while(!quit){
+        exeFilePending = checkExeFile();
+
         printf("1 - Alignments\n");
         printf("2 - Profiling\n");
-        printf("3 - Quit\n");
+        if(exeFilePending){
+            printf("3 - Restore last execution list\n");
+            printf("4 - Quit\n");
+        }
+        else{
+            printf("3 - Quit\n");
+        }
 
         scanf("%d", &choice);
 
@@ -126,8 +134,23 @@ void menu(){
             }
         }
         else if(choice == 3){
-            printf("Quitting\n");
-            quit = 1;
+            if(exeFilePending){
+                loadExeFile();
+                confirmAlignment();
+            }
+            else{
+                printf("Quitting\n");
+                quit = 1;
+            }
+        }
+        else if(choice == 4){
+            if(exeFilePending){
+                printf("Quitting\n");
+                quit = 1;
+            }
+            else{
+                printf("Invalid option\n");
+            }
         }
         else{
             printf("Invalid option\n");
@@ -141,7 +164,7 @@ int main(){
     // t_test **test;
     // test = NULL;
     // readFile(FILE_SOURCE);
-    printf("\ntest\n");
+    // printf("\ntest\n");
 
     // testList();
 
@@ -166,7 +189,7 @@ int main(){
 
 
     loadParameters();
-    printParamaterTable();
+    // printParamaterTable();
     menu();
 
     return 0;

@@ -57,6 +57,9 @@ void loadParameters(){
         // printf("Read %d %d %d\n", size, threads, blocks);
         while(fscanf(fp, "--size:%d threads:%d blocks:%d\n", &size, &threads, &blocks) != EOF){
             addParameter(size, threads, blocks);
+            // #ifdef DEBUG
+            // printf("[DEBUG - PARAMETER] Loaded parameter: size:%d threads:%d blocks:%d\n", size, threads, blocks);
+            // #endif
         }
     }
 }

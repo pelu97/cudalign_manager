@@ -58,13 +58,14 @@ void cleanUp(t_execution* execution){
     system(command);
 
 
-    sprintf(command, "rm -r "WORK_DIR);
-
-    #ifdef DEBUG
-    printf("[DEBUG - CLEANUP] - Removing temporary work directory (%s)\n", command);
-    #endif
-
-    // system(command);
+    cleanWorkDir();
+    // sprintf(command, "rm -r "WORK_DIR);
+    //
+    // #ifdef DEBUG
+    // printf("[DEBUG - CLEANUP] - Removing temporary work directory (%s)\n", command);
+    // #endif
+    //
+    // // system(command);
 
 
     // printf("%s\n", dirName);
@@ -72,6 +73,18 @@ void cleanUp(t_execution* execution){
     // printf("Date time: %d/%d/%d - %d:%d:%d\n", timeinfo->tm_mday, timeinfo->tm_mon, timeinfo->tm_year, timeinfo->tm_hour, timeinfo->tm_min, timeinfo->tm_sec);
 
 
+}
+
+
+void cleanWorkDir(){
+    char command[210];
+    sprintf(command, "rm -r "WORK_DIR);
+
+    #ifdef DEBUG
+    printf("[DEBUG - CLEANUP] - Removing temporary work directory (%s)\n", command);
+    #endif
+
+    // system(command);
 }
 
 // maybe a final clean up, to clear the execution list file after all executions have been finished? Or add a way to check if the list was finished

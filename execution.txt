@@ -1,6 +1,4 @@
-seqA:./seq/5M/AE016879.1.fasta seqB:./seq/5M/AE017225.1.fasta size:5 threads:128 blocks:256 bp:1 isProfile:1 status:0 time:-1 mcups:-1
-seqA:./seq/5M/AE016879.1.fasta seqB:./seq/5M/AE017225.1.fasta size:5 threads:128 blocks:480 bp:1 isProfile:1 status:0 time:-1 mcups:-1
-seqA:./seq/5M/AE016879.1.fasta seqB:./seq/5M/AE017225.1.fasta size:5 threads:128 blocks:512 bp:1 isProfile:1 status:0 time:-1 mcups:-1
-seqA:./seq/5M/AE016879.1.fasta seqB:./seq/5M/AE017225.1.fasta size:5 threads:256 blocks:256 bp:1 isProfile:1 status:0 time:-1 mcups:-1
-seqA:./seq/5M/AE016879.1.fasta seqB:./seq/5M/AE017225.1.fasta size:5 threads:256 blocks:480 bp:1 isProfile:1 status:0 time:-1 mcups:-1
-seqA:./seq/5M/AE016879.1.fasta seqB:./seq/5M/AE017225.1.fasta size:5 threads:256 blocks:512 bp:1 isProfile:1 status:0 time:-1 mcups:-1
+status:1
+seqA:/home/pelu/Documents/Projects/TCC/cudalign_profiler/seq/1M/AE002160.2.fasta seqB:/home/pelu/Documents/Projects/TCC/cudalign_profiler/seq/1M/CP000051.1.fasta size:1 threads:256 blocks:480 bp:1 isProfile:0 status:1 time:-1 mcups:-1
+seqA:/home/pelu/Documents/Projects/TCC/cudalign_profiler/seq/3M/BA000035.2.fasta seqB:/home/pelu/Documents/Projects/TCC/cudalign_profiler/seq/3M/BX927147.1.fasta size:3 threads:256 blocks:480 bp:1 isProfile:0 status:1 time:-1 mcups:-1
+seqA:/home/pelu/Documents/Projects/TCC/cudalign_profiler/seq/5M/AE016879.1.fasta seqB:/home/pelu/Documents/Projects/TCC/cudalign_profiler/seq/5M/AE017225.1.fasta size:5 threads:128 blocks:256 bp:1 isProfile:0 status:1 time:-1 mcups:-1
