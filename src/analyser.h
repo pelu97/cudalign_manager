@@ -28,4 +28,6 @@ void analyse();
 
 void printAnalysisList();
 
+void freeAnalysisList();
+
 void testAnalysis();

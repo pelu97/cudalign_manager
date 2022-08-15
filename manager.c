@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <signal.h>
+#include <string.h>
 // #include "./src/parser.h"
 // #include "./src/data.h"
 #include "./src/execution.h"
@@ -15,6 +17,11 @@
 //     int test3;
 // } t_test;
 
+void sighandler(int signum){
+    printf("\nCaught signal %d - exitting\n", signum);
+    exit(1);
+}
+
 
 void confirmAlignment(){
     char buffer;
@@ -23,11 +30,20 @@ void confirmAlignment(){
     printf("The alignments listed above will be executed. Proceed? (Y/N)\n");
 
     scanf(" %c", &buffer);
+    while((buffer != 'Y') && (buffer != 'y') && (buffer != 'N') && (buffer != 'n')){
+        printf("Invalid option. Valid choices: (Y/y) for yes or (N/n) for no\n");
+        scanf(" %c", &buffer);
+    }
     if((buffer == 'Y') || (buffer == 'y')){
         printf("Running execution list\n");
         runExeList();
         // checkFiles();
         printExeList();
+
+        freeExeList();
+    }
+    else if((buffer == 'N') || (buffer == 'n')){
+        freeExeList();
     }
 }
 
@@ -38,8 +54,10 @@ void importAlignmentFile(){
     FILE *fp;
 
     printf("Setup all the alignments using the file 'alignment_setup.txt' in the project directory.\n");
-    printf("On each line, input the two sequences to be used in an alignment, using the following format:\n");
-    printf("PATH_TO_SEQUENCE_A PATH_TO_SEQUENCE_B\n");
+    printf("On each line of the file, input the two sequences to be used in an alignment, using the following format:\n\n");
+    printf("PATH_TO_SEQUENCE_A PATH_TO_SEQUENCE_B\n\n");
+    printf("Example:\n\n");
+    printf(".../seq/BA000035.2.fasta .../seq/BX927147.1.fasta\n\n");
     printf("If the file is ready, press any key to continue...\n");
     scanf("%c", &buffer);
     scanf("%c", &buffer);
@@ -59,29 +77,130 @@ void importAlignmentFile(){
         confirmAlignment();
     }
     else{
-        printf("An error ocurred when trying to acess the 'alignment_setup.txt' file. Check if it is in the project's directory.\n");
+        printf("An error ocurred when trying to access the 'alignment_setup.txt' file. Check if it is in the project's directory.\n");
     }
 
 
 }
 
-void menu(){
-    int choice, quit = 0, exeFilePending;
 
-    while(!quit){
+void quit(){
+    printf("Quitting\n");
+
+    freeParameterTable();
+    freeAnalysisList();
+}
+
+
+void menuProfile(){
+    int choice = -1;
+
+    while((choice != 1) && (choice != 2) && (choice != 3)){
+        printf("-- A profile is useful to obtain the ideal parameters for your GPU,\n");
+        printf("to ensure that the alignments will be executed as efficient and as fast as possible in your machine.\n");
+        printf("A complete profile will run several executions with different sizes of sequences.\n");
+        printf("It will give the best results, but it will take hours to run. It only has to be executed once,\n");
+        printf("unless the gpu in the machine is changed.\n");
+        printf("A simple profile will run just a few executions and with small sequences. The results won't be as good\n");
+        printf("as a complete profile, but it should take only a few minutes to run.\n");
+        printf("It is recommended to run at least the simplified profiling once.\n");
+
+        printf("┌─────────────────────────┐\n");
+        printf("│     Profiling Status    │\n");
+        printf("│                         │\n");
+        if(CompleteProfile){
+            printf("│   Complete ["COLOR_GREEN"■"COLOR_RESET" - DONE]   │\n");
+        }
+        else{
+            printf("│ Complete ["COLOR_RED"■"COLOR_RESET" - NOT DONE] │\n");
+        }
+
+        if(SimpleProfile){
+            printf("│    Simple ["COLOR_GREEN"■"COLOR_RESET" - DONE]    │\n");
+        }
+        else{
+            printf("│  Simple ["COLOR_RED"■"COLOR_RESET" - NOT DONE]  │\n");
+        }
+
+        printf("└─────────────────────────┘\n\n");
+
+        // if(CompleteProfile){
+        //     printf("1 - Complete profiling (DONE)\n");
+        // }
+        // else{
+        //     printf("1 - Complete profiling (NOT DONE)\n");
+        // }
+        //
+        // if(SimpleProfile){
+        //     printf("2 - Simplified profiling (DONE)\n");
+        // }
+        // else{
+        //     printf("2 - Simplified profiling (NOT DONE)\n");
+        // }
+
+        printf("1 - Complete profiling\n");
+        printf("2 - Simplified profiling\n");
+
+        printf("3 - Back\n");
+
+        scanf("%d", &choice);
+
+        if(choice == 1){
+            runProfileComplete();
+        }
+        else if(choice == 2){
+            runProfileSimple();
+        }
+        else if(choice == 3){
+            printf("Going back\n");
+        }
+        else{
+            printf("Invalid option\n");
+        }
+    }
+}
+
+void header(){
+    printf("┌─────────────────────┐\n");
+    printf("│  CUDAlign Profiler  │\n");
+    printf("└─────────────────────┘\n");
+    printf("\n\n");
+}
+
+
+void menu(){
+    int choice, quitFlag = 0, exeFilePending;
+
+    while(!quitFlag){
         exeFilePending = checkExeFile();
+
+        clearTerminal();
+
+        header();
+
+        if(exeFilePending){
+            printf("-- An unfinished execution list has been found. Choose option 4 to restore it --\n\n");
+        }
 
         printf("1 - Alignments\n");
         printf("2 - Profiling\n");
-        if(exeFilePending){
-            printf("3 - Restore last execution list\n");
-            printf("4 - Quit\n");
+        if(VerboseMode){
+            printf("3 - Disable Verbose Mode (More information during the executions) (ENABLED)\n");
         }
         else{
-            printf("3 - Quit\n");
+            printf("3 - Enable Verbose Mode (More information during the executions) (DISABLED)\n");
+        }
+        if(exeFilePending){
+            printf("4 - Restore unfinished execution list\n");
+            printf("5 - Quit\n");
+        }
+        else{
+            printf("4 - Quit\n");
         }
 
         scanf("%d", &choice);
+
+        clearTerminal();
 
         if(choice == 1){
             choice = -1;
@@ -110,43 +229,47 @@ void menu(){
 
         }
         else if(choice == 2){
-            choice = -1;
+            menuProfile();
+            // choice = -1;
 
-            while((choice != 1) && (choice != 2) && (choice != 3)){
-                printf("1 - Complete profiling\n");
-                printf("2 - Simplified profiling\n");
-                printf("3 - Back\n");
-
-                scanf("%d", &choice);
-
-                if(choice == 1){
-                    runProfileComplete();
-                }
-                else if(choice == 2){
-                    runProfileSimple();
-                }
-                else if(choice == 3){
-                    printf("Going back\n");
-                }
-                else{
-                    printf("Invalid option\n");
-                }
-            }
+            // while((choice != 1) && (choice != 2) && (choice != 3)){
+            //     printf("1 - Complete profiling\n");
+            //     printf("2 - Simplified profiling\n");
+            //     printf("3 - Back\n");
+            //
+            //     scanf("%d", &choice);
+            //
+            //     if(choice == 1){
+            //         runProfileComplete();
+            //     }
+            //     else if(choice == 2){
+            //         runProfileSimple();
+            //     }
+            //     else if(choice == 3){
+            //         printf("Going back\n");
+            //     }
+            //     else{
+            //         printf("Invalid option\n");
+            //     }
+            // }
         }
         else if(choice == 3){
+            toggleVerboseMode();
+        }
+        else if(choice == 4){
             if(exeFilePending){
                 loadExeFile();
                 confirmAlignment();
             }
             else{
-                printf("Quitting\n");
-                quit = 1;
+                quitFlag = 1;
+                quit();
             }
         }
-        else if(choice == 4){
+        else if(choice == 5){
             if(exeFilePending){
-                printf("Quitting\n");
-                quit = 1;
+                quitFlag = 1;
+                quit();
             }
             else{
                 printf("Invalid option\n");
@@ -161,6 +284,14 @@ void menu(){
 
 
 int main(){
+
+    signal(SIGINT, sighandler);
+
+    // simulate gpu name
+    strcpy(CurrentGpu, "NVIDIA RTX 2060");
+
+
+
     // t_test **test;
     // test = NULL;
     // readFile(FILE_SOURCE);

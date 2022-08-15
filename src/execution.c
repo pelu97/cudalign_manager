@@ -1,15 +1,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <signal.h>
 #include "execution.h"
 #include "parser.h"
 #include "parameter.h"
 #include "cleanup.h"
 
 t_execution* ExeList = NULL;
-int currentThreads = -1;
-int exeListLength = 0;
-int exeListStatus = 0;
+int CurrentThreads = -1;
+int ExeListLength = 0;
+int ExeListStatus = 0;
 
 t_execution* insertExeInList(char* seqA, char* seqB, int size, int threads, int blocks, int bp, int isProfile){
     t_execution *newElement, *temp;
@@ -44,10 +45,10 @@ t_execution* insertExeInList(char* seqA, char* seqB, int size, int threads, int 
         temp->next = newElement;
     }
 
-    exeListLength++;
+    ExeListLength++;
 
     #ifdef DEBUG
-    printf("[DEBUG - EXECUTION] - Inserted execution into execution list (%dM %d %dT %dB) - list length %d\n", size, bp, blocks, threads, exeListLength);
+    printf("[DEBUG - EXECUTION] - Inserted execution into execution list (%dM %d %dT %dB) - list length %d\n", size, bp, blocks, threads, ExeListLength);
     #endif
 
     return newElement;
@@ -90,25 +91,34 @@ void setExeSize(t_execution* execution, int size){
 
 
 void printExeList(){
-    t_execution *temp;
+    t_execution *execution;
     int i;
 
     if(ExeList == NULL){
         printf("Empty list.\n");
     }
     else{
-        temp = ExeList;
+        execution = ExeList;
         i=1;
         printf("----Attention: Parameters with a value of -1 will be determined automatically by the software. There is no need to do anything about it----\n");
-        while(temp != NULL){
-            // printf("List element %d: SeqA=%s, SeqB=%s, Size=%d, Threads=%d, Blocks=%d, BP=%d\n", i, temp->seqA, temp->seqB, temp->size, temp->threads, temp->blocks, temp->bp);
+        while(execution != NULL){
+            // printf("List element %d: SeqA=%s, SeqB=%s, Size=%d, Threads=%d, Blocks=%d, BP=%d\n", i, execution->seqA, execution->seqB, execution->size, execution->threads, execution->blocks, execution->bp);
             printf("--Execution %d:\n", i);
-            printf("  ---Sequence A path=%s\n", temp->seqA);
-            printf("  ---Sequence B path=%s\n", temp->seqB);
-            printf("  ---Size=%d Threads=%d Blocks=%d\n", temp->size, temp->threads, temp->blocks);
+            printf("  ---Sequence A path=%s\n", execution->seqA);
+            printf("  ---Sequence B path=%s\n", execution->seqB);
+            printf("  ---Size=%d Threads=%d Blocks=%d\n", execution->size, execution->threads, execution->blocks);
+            printf("  ---Status: ");
+
+            if(execution->status){
+                printf("["COLOR_GREEN"■"COLOR_RESET" COMPLETED]\n");
+            }
+            else{
+                printf("["COLOR_YELLOW"■"COLOR_RESET" PENDING]\n");
+            }
+
             printf("--End Execution %d\n", i);
             i++;
-            temp = temp->next;
+            execution = execution->next;
         }
     }
 }
@@ -139,19 +149,27 @@ void inputExeList(){
 
 void runExeList(){
     t_execution* execution;
-    int i, paramsReturn[2];
-    char exeLine[1000], seqA[300], seqB[300], cudalignDir[300];
+    int i, paramsReturn[2], filesError;
+    char exeLine[10000], cudalignDir[300], verbose[15];
+    // char seqA[300], seqB[300];
+
+    #ifndef DUMMY
+    int returnValue = 0;
+    #endif
 
     execution = ExeList;
 
-    checkFiles();
+    filesError = checkFiles();
 
     if(execution == NULL){
         printf("No executions in list.\n");
     }
+    else if(filesError){
+        printf("There was an error with one or more files in the execution list\n");
+    }
     else{
         i=1;
-
+        cleanWorkDir();
         // if restoring an execution file, goes through list until finding the first pending execution
         while((execution != NULL) && (execution->status == 1)){
             i++;
@@ -176,29 +194,29 @@ void runExeList(){
 
             // Checks the number of threads configured for the current execution
 
-        	if((execution->threads == 64) && (currentThreads != 64)){
+        	if((execution->threads == 64) && (CurrentThreads != 64)){
         		// Change directory to 64 threads compiled cudalign
         		printf("Using CUDAlign 64 threads directory - "CUDA64_DIR"\n");
         		sprintf(cudalignDir, CUDA64_DIR);
         		//printf("cd "CUDA64_DIR);
         		//system("cd "CUDA64_DIR);
-        		currentThreads = 64;
+        		CurrentThreads = 64;
         	}
-        	else if((execution->threads == 128) && (currentThreads != 128)){
+        	else if((execution->threads == 128) && (CurrentThreads != 128)){
         		// Change directory to 128 threads compiled cudalign
         		printf("Using CUDAlign 128 threads directory - "CUDA128_DIR"\n");
         		sprintf(cudalignDir, CUDA128_DIR);
         		//printf("cd "CUDA128_DIR);
         		//system("cd "CUDA128_DIR);
-        		currentThreads = 128;
+        		CurrentThreads = 128;
         	}
-        	else if((execution->threads == 256) && (currentThreads != 256)){
+        	else if((execution->threads == 256) && (CurrentThreads != 256)){
         		// Change directory to 256 threads compiled cudalign
         		printf("Using CUDAlign 256 threads directory - "CUDA256_DIR"\n");
         		sprintf(cudalignDir, CUDA256_DIR);
         		//printf("cd "CUDA256_DIR);
         		//system("cd "CUDA256_DIR);
-        		currentThreads = 256;
+        		CurrentThreads = 256;
         	}
 
 
@@ -212,17 +230,36 @@ void runExeList(){
         	// 	sprintf(seqB, SEQ_DIR"/1M/"SEQ_1_B);
         	// }
 
-            printf("Executing alignment %d (%d/%d)\n", i, i, exeListLength);
+            if(VerboseMode){
+                strcpy(verbose, "> /dev/null");
+            }
+            else{
+                strcpy(verbose, "");
+            }
+
+            printf("Executing alignment %d (%d/%d)\n", i, i, ExeListLength);
 
             // Format the execution command using the parameters (cudalign directory, sequences directories and number of blocks)
-            sprintf(exeLine, "%s/cudalign --ram-size=5G %s %s --blocks=%d", cudalignDir, execution->seqA, execution->seqB, execution->blocks);
+            sprintf(exeLine, "%s/cudalign --ram-size=5G %s %s --blocks=%d %s", cudalignDir, execution->seqA, execution->seqB, execution->blocks, verbose);
             // Execute command
 
             // execute
             #ifdef DEBUG
             printf("[DEBUG - EXECUTION] Execution Line %d: %s\n", i, exeLine);
             #endif
-            // system(exeLine);
+
+            #ifndef DUMMY
+            returnValue = system(exeLine);
+            raise(returnValue);
+            #endif
+
+            #ifdef DUMMY
+            // execute dummy program to simulate alignment execution
+            int dummyReturn = 0;
+            dummyReturn = system("./dummy_program");
+            printf("[DUMMY - EXECUTION] Dummy return = %d_____\n", dummyReturn);
+            raise(dummyReturn);
+            #endif
 
             // Finished this execution, update its status
             execution->status = 1;
@@ -240,13 +277,15 @@ void runExeList(){
 
 
             // Update execution list file
-            // updateExeFile();
+            updateExeFile();
 
             execution = execution->next;
             i++;
         }
-        exeListStatus = 1;
+        ExeListStatus = 1;
         updateExeFile();
+
+        // freeExeList();
 
     }
 }
@@ -385,7 +424,7 @@ int getFileSize(FILE* fp){
     return size;
 }
 
-void checkFiles(){
+int checkFiles(){
     int i = 1, sizeAverage, sizeA, sizeB;
     t_execution* execution;
     FILE* fp;
@@ -414,7 +453,7 @@ void checkFiles(){
             else{
                 printf("Error ocurred when trying to access file [%s] in alignment number %d.\n", execution->seqA, i);
                 printf("Check if the file name and path are typed correctly and that the file exists in that path.\n");
-                break;
+                return 1;
             }
 
             fp = fopen(execution->seqB, "r");
@@ -432,7 +471,8 @@ void checkFiles(){
             else{
                 printf("Error ocurred when trying to access file [%s] in alignment number %d.\n", execution->seqA, i);
                 printf("Check if the file name and path are typed correctly and that the file exists in that path.\n");
-                break;
+                // break;
+                return 1;
             }
 
             if(execution->size == -1){
@@ -444,6 +484,8 @@ void checkFiles(){
             execution = execution->next;
         }
     }
+
+    return 0;
 }
 
 
@@ -460,7 +502,7 @@ void updateExeFile(){
         #endif
     }
     else{
-        fprintf(fp, "status:%d\n", exeListStatus);
+        fprintf(fp, "status:%d\n", ExeListStatus);
         while(execution != NULL){
             fprintf(fp, "seqA:%s seqB:%s size:%d threads:%d blocks:%d bp:%d isProfile:%d status:%d time:%d mcups:%d\n",
                 execution->seqA, execution->seqB, execution->size, execution->threads, execution->blocks, execution->bp,
@@ -492,7 +534,7 @@ void loadExeFile(){
         #endif
     }
     else{
-        fscanf(fp, "status:%d\n", &exeListStatus);
+        fscanf(fp, "status:%d\n", &ExeListStatus);
         while(fscanf(fp, "seqA:%s seqB:%s size:%d threads:%d blocks:%d bp:%d isProfile:%d status:%d time:%d mcups:%d\n",
             seqA, seqB, &size, &threads, &blocks, &bp, &isProfile, &status, &time, &mcups
         ) != EOF){
@@ -521,6 +563,24 @@ int checkExeFile(){
     }
 
     return result;
+}
+
+
+void freeExeList(){
+    t_execution *execution, *temp;
+
+    execution = ExeList;
+
+    while(execution != NULL){
+        temp = execution;
+        execution = execution->next;
+        free(temp);
+    }
+
+    ExeListLength = 0;
+    CurrentThreads = 0;
+
+    ExeList = NULL;
 }
 
 

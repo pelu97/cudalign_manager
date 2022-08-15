@@ -13,7 +13,7 @@ void cleanUp(t_execution* execution){
     // Clean the temporary work directory to prevent issues with the next alignment
     time_t rawtime;
     struct tm *timeinfo;
-    char dirName[200], command[210];
+    char dirName[200], command[300];
 
     time(&rawtime);
     timeinfo = localtime(&rawtime);

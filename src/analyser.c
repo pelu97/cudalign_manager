@@ -155,6 +155,19 @@ void printAnalysisList(){
 }
 
 
+void freeAnalysisList(){
+    t_analysis *analysis, *temp;
+
+    analysis = AnalysisList;
+
+    while(analysis != NULL){
+        temp = analysis;
+        analysis = analysis->next;
+        free(temp);
+    }
+}
+
+
 void testAnalysis(){
     testExeList();
     analyse();
