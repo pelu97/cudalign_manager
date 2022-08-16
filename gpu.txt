@@ -1,0 +1,1 @@
+GPU 0: NVIDIA GeForce RTX 2060 (UUID: GPU-e4b9905e-f75f-2a5b-bf45-e56d777d07ff)

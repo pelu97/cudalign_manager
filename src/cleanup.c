@@ -84,7 +84,7 @@ void cleanWorkDir(){
     printf("[DEBUG - CLEANUP] - Removing temporary work directory (%s)\n", command);
     #endif
 
-    // system(command);
+    system(command);
 }
 
 // maybe a final clean up, to clear the execution list file after all executions have been finished? Or add a way to check if the list was finished

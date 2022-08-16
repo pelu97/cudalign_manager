@@ -43,11 +43,12 @@
 #endif
 
 #ifndef CUDA128_DIR
-#define CUDA128_DIR "/home/laicoadm/Documentos/Pedro/MASA_CUDAlign_128_threads"
+#define CUDA128_DIR "./cudalign/128_threads"
+// #define CUDA128_DIR "/home/laicoadm/Documentos/Pedro/MASA_CUDAlign_128_threads"
 #endif
 
 #ifndef CUDA256_DIR
-#define CUDA256_DIR "/home/laicoadm/Documentos/Pedro/MASA_CUDAlign_256_threads"
+#define CUDA256_DIR "./cudalign/256_threads"
 #endif
 
 
@@ -137,14 +138,14 @@
 #endif
 
 // Dummy flag - useful for debugging, enable execution of dummy programs to simulate executions
-#ifndef DUMMY
-#define DUMMY
-#endif
+// #ifndef DUMMY
+// #define DUMMY
+// #endif
 
 // Flag to disable terminal clearing. Useful for debugging, should be disabled in the final build
-// #ifndef DISABLE_CLEAR
-// #define DISABLE_CLEAR
-// #endif
+#ifndef DISABLE_CLEAR
+#define DISABLE_CLEAR
+#endif
 
 
 extern int VerboseMode;
@@ -154,6 +155,8 @@ extern char CurrentGpu[200];
 void clearTerminal();
 
 void toggleVerboseMode();
+
+void getCurrentGpu();
 
 
 // Colors

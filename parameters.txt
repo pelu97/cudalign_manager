@@ -17,3 +17,5 @@
 --size:5 threads:-1 blocks:-1
 --size:10 threads:-1 blocks:-1
 --size:23 threads:-1 blocks:-1
+#NVIDIA GeForce RTX 2060 # simple:1 complete:0
+--size:1 threads:128 blocks:480

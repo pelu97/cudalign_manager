@@ -118,6 +118,11 @@ void printAnalysisList(){
 
     analysis = AnalysisList;
 
+    #ifdef DEBUG
+    if(analysis == NULL){
+        printf("[DEBUG - ANALYSER] No analysis found\n");
+    }
+    #endif
 
     while(analysis != NULL){
         printf("-Analysis %d\n", i);

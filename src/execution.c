@@ -150,7 +150,7 @@ void inputExeList(){
 void runExeList(){
     t_execution* execution;
     int i, paramsReturn[2], filesError;
-    char exeLine[10000], cudalignDir[300], verbose[15];
+    char exeLine[10000], cudalignDir[300], verbose[18];
     // char seqA[300], seqB[300];
 
     #ifndef DUMMY
@@ -230,8 +230,8 @@ void runExeList(){
         	// 	sprintf(seqB, SEQ_DIR"/1M/"SEQ_1_B);
         	// }
 
-            if(VerboseMode){
-                strcpy(verbose, "> /dev/null");
+            if(!VerboseMode){
+                strcpy(verbose, "> /dev/null 2>&1");
             }
             else{
                 strcpy(verbose, "");

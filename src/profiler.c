@@ -524,4 +524,6 @@ void finishProfile(){
     }
 
     freeExeList();
+
+    loadParameters();
 }

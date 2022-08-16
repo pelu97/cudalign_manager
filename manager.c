@@ -288,7 +288,10 @@ int main(){
     signal(SIGINT, sighandler);
 
     // simulate gpu name
-    strcpy(CurrentGpu, "NVIDIA RTX 2060");
+    // strcpy(CurrentGpu, "NVIDIA RTX 2060");
+
+    // get gpu model
+    getCurrentGpu();
 
 
 
