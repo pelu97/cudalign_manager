@@ -1,7 +1,7 @@
 status:0
-seqA:./seq/1M/AE002160.2.fasta seqB:./seq/1M/CP000051.1.fasta size:1 threads:128 blocks:256 bp:1 isProfile:1 status:1 time:10570 mcups:106017
-seqA:./seq/1M/AE002160.2.fasta seqB:./seq/1M/CP000051.1.fasta size:1 threads:128 blocks:480 bp:1 isProfile:1 status:1 time:10020 mcups:111834
-seqA:./seq/1M/AE002160.2.fasta seqB:./seq/1M/CP000051.1.fasta size:1 threads:128 blocks:512 bp:1 isProfile:1 status:1 time:10054 mcups:111457
+seqA:./seq/1M/AE002160.2.fasta seqB:./seq/1M/CP000051.1.fasta size:1 threads:128 blocks:256 bp:1 isProfile:1 status:0 time:-1 mcups:-1
+seqA:./seq/1M/AE002160.2.fasta seqB:./seq/1M/CP000051.1.fasta size:1 threads:128 blocks:480 bp:1 isProfile:1 status:0 time:-1 mcups:-1
+seqA:./seq/1M/AE002160.2.fasta seqB:./seq/1M/CP000051.1.fasta size:1 threads:128 blocks:512 bp:1 isProfile:1 status:0 time:-1 mcups:-1
 seqA:./seq/1M/AE002160.2.fasta seqB:./seq/1M/CP000051.1.fasta size:1 threads:256 blocks:256 bp:1 isProfile:1 status:0 time:-1 mcups:-1
 seqA:./seq/1M/AE002160.2.fasta seqB:./seq/1M/CP000051.1.fasta size:1 threads:256 blocks:480 bp:1 isProfile:1 status:0 time:-1 mcups:-1
 seqA:./seq/1M/AE002160.2.fasta seqB:./seq/1M/CP000051.1.fasta size:1 threads:256 blocks:512 bp:1 isProfile:1 status:0 time:-1 mcups:-1

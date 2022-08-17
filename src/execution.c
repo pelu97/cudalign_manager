@@ -161,11 +161,16 @@ void runExeList(){
 
     filesError = checkFiles();
 
+    #ifdef DEBUG
+    printf("[DEBUG - EXECUTION] Files error: %d\n", filesError);
+    #endif
+
     if(execution == NULL){
         printf("No executions in list.\n");
     }
     else if(filesError){
         printf("There was an error with one or more files in the execution list\n");
+        exit(1);
     }
     else{
         i=1;
@@ -430,6 +435,32 @@ int checkFiles(){
     FILE* fp;
     char seqIdBuffer[50];
 
+    // check for cudalign executables
+
+    // 128 threads
+    fp = fopen(CUDA128_DIR"/cudalign", "r");
+
+    if(fp == NULL){
+        printf("The CUDAlign 128 threads executable was not found. Check if it has been deleted from the ./cudalign/128_threads directory or if its name has changed (should be [cudalign])\n");
+        return 1;
+    }
+    else{
+        fclose(fp);
+    }
+
+    // 256 threads
+    fp = fopen(CUDA256_DIR"/cudalign", "r");
+
+    if(fp == NULL){
+        printf("The CUDAlign 256 threads executable was not found. Check if it has been deleted from the ./cudalign/256_threads directory or if its name has changed (should be [cudalign])\n");
+        return 1;
+    }
+    else{
+        fclose(fp);
+    }
+
+
+    // check for sequence files in paths provided in the executions
     execution = ExeList;
 
     if(execution == NULL){
@@ -469,7 +500,7 @@ int checkFiles(){
                 fclose(fp);
             }
             else{
-                printf("Error ocurred when trying to access file [%s] in alignment number %d.\n", execution->seqA, i);
+                printf("Error ocurred when trying to access file [%s] in alignment number %d.\n", execution->seqB, i);
                 printf("Check if the file name and path are typed correctly and that the file exists in that path.\n");
                 // break;
                 return 1;
