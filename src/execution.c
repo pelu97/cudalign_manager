@@ -100,14 +100,15 @@ void printExeList(){
     else{
         execution = ExeList;
         i=1;
-        printf("----Attention: Parameters with a value of -1 will be determined automatically by the software. There is no need to do anything about it----\n");
+        printf("\n──── Attention: Parameters with a value of -1 will be determined automatically by the software. There is no need to do anything about it ────\n");
+        printf("\n────────────────────\n");
         while(execution != NULL){
             // printf("List element %d: SeqA=%s, SeqB=%s, Size=%d, Threads=%d, Blocks=%d, BP=%d\n", i, execution->seqA, execution->seqB, execution->size, execution->threads, execution->blocks, execution->bp);
-            printf("--Execution %d:\n", i);
-            printf("  ---Sequence A path=%s\n", execution->seqA);
-            printf("  ---Sequence B path=%s\n", execution->seqB);
-            printf("  ---Size=%d Threads=%d Blocks=%d\n", execution->size, execution->threads, execution->blocks);
-            printf("  ---Status: ");
+            printf("── Execution %d:\n", i);
+            printf("───── Sequence A path=%s\n", execution->seqA);
+            printf("───── Sequence B path=%s\n", execution->seqB);
+            printf("───── Size=%d Threads=%d Blocks=%d\n", execution->size, execution->threads, execution->blocks);
+            printf("───── Status: ");
 
             if(execution->status){
                 printf("["COLOR_GREEN"■"COLOR_RESET" COMPLETED]\n");
@@ -116,7 +117,8 @@ void printExeList(){
                 printf("["COLOR_YELLOW"■"COLOR_RESET" PENDING]\n");
             }
 
-            printf("--End Execution %d\n", i);
+            printf("── End Execution %d\n", i);
+            printf("────────────────────\n");
             i++;
             execution = execution->next;
         }
@@ -201,7 +203,9 @@ void runExeList(){
 
         	if((execution->threads == 64) && (CurrentThreads != 64)){
         		// Change directory to 64 threads compiled cudalign
-        		printf("Using CUDAlign 64 threads directory - "CUDA64_DIR"\n");
+                #ifdef DEBUG
+        		printf("[DEBUG - EXECUTION] Using CUDAlign 64 threads directory - "CUDA64_DIR"\n");
+                #endif
         		sprintf(cudalignDir, CUDA64_DIR);
         		//printf("cd "CUDA64_DIR);
         		//system("cd "CUDA64_DIR);
@@ -209,7 +213,9 @@ void runExeList(){
         	}
         	else if((execution->threads == 128) && (CurrentThreads != 128)){
         		// Change directory to 128 threads compiled cudalign
-        		printf("Using CUDAlign 128 threads directory - "CUDA128_DIR"\n");
+                #ifdef DEBUG
+        		printf("[DEBUG - EXECUTION] Using CUDAlign 128 threads directory - "CUDA128_DIR"\n");
+                #endif
         		sprintf(cudalignDir, CUDA128_DIR);
         		//printf("cd "CUDA128_DIR);
         		//system("cd "CUDA128_DIR);
@@ -217,8 +223,10 @@ void runExeList(){
         	}
         	else if((execution->threads == 256) && (CurrentThreads != 256)){
         		// Change directory to 256 threads compiled cudalign
-        		printf("Using CUDAlign 256 threads directory - "CUDA256_DIR"\n");
-        		sprintf(cudalignDir, CUDA256_DIR);
+                #ifdef DEBUG
+        		printf("[DEBUG - EXECUTION] Using CUDAlign 256 threads directory - "CUDA256_DIR"\n");
+                #endif
+                sprintf(cudalignDir, CUDA256_DIR);
         		//printf("cd "CUDA256_DIR);
         		//system("cd "CUDA256_DIR);
         		CurrentThreads = 256;

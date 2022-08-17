@@ -27,7 +27,7 @@ void confirmAlignment(){
     char buffer;
 
     printExeList();
-    printf("The alignments listed above will be executed. Proceed? (Y/N)\n");
+    printf("\nThe alignments listed above will be executed. Proceed? (Y/N)\n");
 
     scanf(" %c", &buffer);
     while((buffer != 'Y') && (buffer != 'y') && (buffer != 'N') && (buffer != 'n')){
@@ -53,11 +53,13 @@ void importAlignmentFile(){
     char seqA[4097], seqB[4097];
     FILE *fp;
 
-    printf("Setup all the alignments using the file 'alignment_setup.txt' in the project directory.\n");
-    printf("On each line of the file, input the two sequences to be used in an alignment, using the following format:\n\n");
+    printf("\nSetup all the alignments using the file 'alignment_setup.txt' in the project directory.\n");
+    printf("On each line of the file, input the two sequences to be aligned, using the following format:\n\n");
     printf("PATH_TO_SEQUENCE_A PATH_TO_SEQUENCE_B\n\n");
     printf("Example:\n\n");
     printf(".../seq/BA000035.2.fasta .../seq/BX927147.1.fasta\n\n");
+    printf("The sequences must be in the fasta format.\n");
+    printf("After running, the results of each alignment will be available in a folder inside the ./results/ directory.\n");
     printf("If the file is ready, press any key to continue...\n");
     scanf("%c", &buffer);
     scanf("%c", &buffer);
@@ -98,14 +100,15 @@ void menuProfile(){
     int choice = -1;
 
     while((choice != 1) && (choice != 2) && (choice != 3)){
-        printf("-- A profile is useful to obtain the ideal parameters for your GPU,\n");
-        printf("to ensure that the alignments will be executed as efficient and as fast as possible in your machine.\n");
-        printf("A complete profile will run several executions with different sizes of sequences.\n");
-        printf("It will give the best results, but it will take hours to run. It only has to be executed once,\n");
-        printf("unless the gpu in the machine is changed.\n");
-        printf("A simple profile will run just a few executions and with small sequences. The results won't be as good\n");
-        printf("as a complete profile, but it should take only a few minutes to run.\n");
-        printf("It is recommended to run at least the simplified profiling once.\n");
+        printf("───── Profiling Information ─────\n\n");
+        printf("    A profile is useful to obtain the ideal parameters for your GPU, to ensure that the alignments will be executed as efficient and as fast as possible in your machine.\n");
+        // printf("to ensure that the alignments will be executed as efficient and as fast as possible in your machine.\n");
+        printf("    A complete profile will run several executions with different sizes of sequences. It will give the best results, but it will take hours to run. It only has to be executed once, unless the gpu in the machine is changed.\n");
+        // printf("It will give the best results, but it will take hours to run. It only has to be executed once,\n");
+        // printf("unless the gpu in the machine is changed.\n");
+        printf("    A simple profile will run just a few executions and with small sequences. The results won't be as good as a complete profile, but it should take only a few minutes to run.\n");
+        // printf("as a complete profile, but it should take only a few minutes to run.\n");
+        printf("--- It is recommended to run at least the simplified profiling once. ---\n\n");
 
         printf("┌─────────────────────────┐\n");
         printf("│     Profiling Status    │\n");
@@ -290,10 +293,10 @@ int main(){
     signal(SIGINT, sighandler);
 
     // simulate gpu name
-    strcpy(CurrentGpu, "NVIDIA RTX 2060");
+    // strcpy(CurrentGpu, "NVIDIA RTX 2060");
 
     // get gpu model
-    // getCurrentGpu();
+    getCurrentGpu();
 
 
 
