@@ -206,20 +206,20 @@ void menu(){
             choice = -1;
 
             while((choice != 1) && (choice != 2) && (choice != 3)){
-                printf("1 - Input directly\n");
-                printf("2 - Read from file\n");
-                printf("3 - Back\n");
+                // printf("1 - Input directly\n");
+                printf("1 - Read from file\n");
+                printf("2 - Back\n");
 
                 scanf("%d", &choice);
 
+                // if(choice == 1){
+                //     printf("GET INPUT FROM USER\n");
+                // }
                 if(choice == 1){
-                    printf("GET INPUT FROM USER\n");
-                }
-                else if(choice == 2){
                     // printf("READ FROM FILE\n");
                     importAlignmentFile();
                 }
-                else if(choice == 3){
+                else if(choice == 2){
                     printf("Going back\n");
                 }
                 else{
@@ -288,10 +288,10 @@ int main(){
     signal(SIGINT, sighandler);
 
     // simulate gpu name
-    // strcpy(CurrentGpu, "NVIDIA RTX 2060");
+    strcpy(CurrentGpu, "NVIDIA RTX 2060");
 
     // get gpu model
-    getCurrentGpu();
+    // getCurrentGpu();
 
 
 
