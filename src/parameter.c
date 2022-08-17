@@ -118,6 +118,8 @@ void loadParameters(){
 
         // fscanf(fp, "--size:%d threads:%d blocks:%d\n", &size, &threads, &blocks);
         // printf("Read %d %d %d\n", size, threads, blocks);
+
+        fclose(fp);
     }
 }
 
@@ -161,7 +163,11 @@ void insertLine(char* newLine, FILE *fp, long int insertPosition){
 
     for(i=0; i<bufferLimit; i++){
         fputs(buffers[i], fp);
+        free(buffers[i]);
     }
+
+    free(buffers[i]);
+    free(buffers);
 
 
     #ifdef DEBUG
@@ -205,7 +211,11 @@ void overwriteLine(char* newLine, FILE *fp, long int overwritePosition){
 
     for(i=0; i<bufferLimit; i++){
         fputs(buffers[i], fp);
+        free(buffers[i]);
     }
+
+    free(buffers[i]);
+    free(buffers);
 
 
     #ifdef DEBUG
@@ -231,6 +241,7 @@ void saveParameters(int size, int threads, int blocks){
         printf("[DEBUG - PARAMETER] - Didn't find parameter file, created new one\n");
         printf("[DEBUG - PARAMETER] - Added best parameters to file (size:%d threads:%d blocks:%d)\n", size, threads, blocks);
         #endif
+        fclose(fp);
     }
     else{
         // looks for the gpu in the parameter file

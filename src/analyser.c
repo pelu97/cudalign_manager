@@ -168,6 +168,8 @@ void freeAnalysisList(){
     while(analysis != NULL){
         temp = analysis;
         analysis = analysis->next;
+
+        free(temp->executions);
         free(temp);
     }
 }

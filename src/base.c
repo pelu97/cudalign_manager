@@ -59,7 +59,7 @@ void getCurrentGpu(){
         printf("[DEBUG - BASE] Variables parsed from gpu file: %d\n", varParsed);
         #endif
 
-
+        fclose(fp);
     }
 
 

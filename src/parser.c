@@ -78,6 +78,8 @@ void readFile(const char* fileSource){
 
         i++;
     }
+
+    fclose(filep);
 }
 
 void readStats(int* stats){
@@ -115,5 +117,7 @@ void readStats(int* stats){
 
         i++;
     }
+
+    fclose(filep);
 
 }

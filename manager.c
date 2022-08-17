@@ -72,6 +72,7 @@ void importAlignmentFile(){
             insertExeInList(seqA, seqB, -1, -1, -1, 1, 0);
         }
 
+        fclose(fp);
         printf("Alignments read from file successfully!\n");
         // printExeList();
         confirmAlignment();
@@ -89,6 +90,7 @@ void quit(){
 
     freeParameterTable();
     freeAnalysisList();
+    // freeExeList();
 }
 
 
