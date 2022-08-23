@@ -277,6 +277,8 @@ void runExeList(){
             // Finished this execution, update its status
             execution->status = 1;
 
+            printf("Alignment %d finished (%d/%d)\n", i, i, ExeListLength);
+
             if(execution->isProfile){
                 // If it was a profiler execution, call fetchResult
                 fetchResult(execution);
