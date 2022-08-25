@@ -5,7 +5,7 @@
 // #include "./src/parser.h"
 // #include "./src/data.h"
 #include "./src/execution.h"
-#include "./src/analyser.h"
+// #include "./src/analyser.h"
 #include "./src/profiler.h"
 #include "./src/parameter.h"
 

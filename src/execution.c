@@ -3,9 +3,9 @@
 #include <string.h>
 #include <signal.h>
 #include "execution.h"
-#include "parser.h"
+#include "result.h"
 #include "parameter.h"
-#include "cleanup.h"
+#include "result.h"
 
 t_execution* ExeList = NULL;
 int CurrentThreads = -1;
