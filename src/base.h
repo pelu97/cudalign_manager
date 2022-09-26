@@ -133,9 +133,9 @@
 
 
 // Debug flag - enables debug prints inside modules
-#ifndef DEBUG
-#define DEBUG
-#endif
+// #ifndef DEBUG
+// #define DEBUG
+// #endif
 
 // Dummy flag - useful for debugging, enable execution of dummy programs to simulate executions
 // #ifndef DUMMY
@@ -143,9 +143,9 @@
 // #endif
 
 // Flag to disable terminal clearing. Useful for debugging, should be disabled in the final build
-#ifndef DISABLE_CLEAR
-#define DISABLE_CLEAR
-#endif
+// #ifndef DISABLE_CLEAR
+// #define DISABLE_CLEAR
+// #endif
 
 
 extern int VerboseMode;

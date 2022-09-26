@@ -101,12 +101,12 @@ void menuProfile(){
 
     while((choice != 1) && (choice != 2) && (choice != 3)){
         printf("───── Profiling Information ─────\n\n");
-        printf("    A profile is useful to obtain the ideal parameters for your GPU, to ensure that the alignments will be executed as efficient and as fast as possible in your machine.\n");
+        printf("    A profile is useful to obtain adequate parameters for your GPU, to ensure that the alignments will be executed efficiently in your machine.\n");
         // printf("to ensure that the alignments will be executed as efficient and as fast as possible in your machine.\n");
         printf("    A complete profile will run several executions with different sizes of sequences. It will give the best results, but it will take hours to run. It only has to be executed once, unless the gpu in the machine is changed.\n");
         // printf("It will give the best results, but it will take hours to run. It only has to be executed once,\n");
         // printf("unless the gpu in the machine is changed.\n");
-        printf("    A simple profile will run just a few executions and with small sequences. The results won't be as good as a complete profile, but it should take only a few minutes to run.\n");
+        printf("    A simple profile will run just a few executions and with small sequences. The results will not be as good as a complete profile, but it should take only a few minutes to run.\n");
         // printf("as a complete profile, but it should take only a few minutes to run.\n");
         printf("--- It is recommended to run at least the simplified profiling once. ---\n\n");
 
