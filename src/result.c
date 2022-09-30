@@ -217,7 +217,7 @@ void cleanWorkDir(){
         sprintf(command, "rm -r "WORK_DIR);
     }
     else{
-        sprintf(command, "rm -r > /dev/null 2>&1"WORK_DIR);
+        sprintf(command, "rm -r "WORK_DIR" > /dev/null 2>&1");
     }
 
     #ifdef DEBUG
