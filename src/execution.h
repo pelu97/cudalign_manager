@@ -1,7 +1,6 @@
 #include "base.h"
 #include "stdio.h"
 
-// #define DEBUG
 
 #ifndef EXECUTION_TYPE
 #define EXECUTION_TYPE

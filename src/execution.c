@@ -392,7 +392,7 @@ void getBestParam(int* paramsReturn, int size){
     }
 
     if((i>0) && (paramsReturn[0] == -1)){
-        // checked the table and did'nt find a parameter match
+        // checked the table and didn't find a parameter match
         // only possible if size is bigger then all sizes stored in the table
         // use the last size in the table
         if(prevParam != NULL){
@@ -486,7 +486,7 @@ int checkFiles(){
                 strcpy(execution->seqA_ID, seqIdBuffer);
 
                 if(execution->size == -1){
-                    // Still doesnt have the sequence size (user alignment)
+                    // Still doesn't have the sequence size (user alignment)
                     sizeA = getFileSize(fp);
                 }
                 fclose(fp);
@@ -504,7 +504,7 @@ int checkFiles(){
                 strcpy(execution->seqB_ID, seqIdBuffer);
 
                 if(execution->size == -1){
-                    // Still doesnt have the sequence size (user alignment)
+                    // Still doesn't have the sequence size (user alignment)
                     sizeB = getFileSize(fp);
                 }
                 fclose(fp);

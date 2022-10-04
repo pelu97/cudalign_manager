@@ -180,7 +180,7 @@ void overwriteLine(char* newLine, FILE *fp, long int overwritePosition){
     char **buffers = NULL;
     int i=0, bufferLimit;
 
-    // Saves all the lines after the one marked to overwrite in buffers, than overwrite the line and rewrites back the lines from the buffers
+    // Saves all the lines after the one marked to overwrite in buffers, then overwrite the line and rewrites back the lines from the buffers
     // fp must be in the position after the line to be overwritten already
 
     buffers = realloc(buffers, sizeof(char*) * (i+1));
